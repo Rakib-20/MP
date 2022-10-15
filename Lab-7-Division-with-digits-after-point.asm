@@ -82,7 +82,11 @@ NUMBER2:
     
 CALCULATE:
 
-    MOV B, BH               ; store the second number in B
+    MOV B, BH               ; store the second number in B  
+    
+    MOV AH, 9
+    LEA DX, MSG3            ; printing the result message 
+    INT 21H
                                 
     MOV AX, 0               ; clear AX register
     MOV AL, A                   ; copy AL in A
@@ -90,17 +94,10 @@ CALCULATE:
     DIV B                   ; divide the numbers and store it in AL  
     
     MOV BH, AH              ; storing the remainder in BH for calculating after decimal point
-    MOV BL, AL                  ; storing the quotient in BL from AL
-    
-    MOV AH, 9
-    LEA DX, MSG3            ; printing the result message 
-    INT 21H
     
     
 DISPLAY:
-    
-    MOV AL, BL              ; load the quotient into AL from BL
-    
+        
     MOV DL, 100D            ; to divide the number with 100 & extracting the 1st digit
     
     MOV AH, 0

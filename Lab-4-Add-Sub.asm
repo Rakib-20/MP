@@ -5,6 +5,10 @@
     A   DB  ?
     B   DB  ?
     
+    D1  DB  ?
+    D2  DB  ?
+    D3  DB  ?
+    
     MSG1    DB  'Enter the first number: $'
     MSG2    DB  10,13,'Enter the second number: $'
     MSG3    DB  10,13,'Result of ADDITION: $'
@@ -79,54 +83,106 @@ NUMBER2:
     
 CALCULATE:
                             
-    MOV B, BH               ; store the second number in B
+    MOV B, BH               ; store the second number in B 
+    
+    MOV AH, 9
+    LEA DX, MSG3    
+    INT 21H
                                 
     MOV AX, 0                   ; clear AX register
     MOV AL, A               ; copy AL in A
     
-    ADD AL, B               ; add the numbers and store it in AL
-    AAM                         ; adjust the number in AH and AL
+    ADD AL, B               ; add the numbers and store it in AL 
     
-    MOV BL, AL              ; copy second digit in BL
-    MOV BH, AH                  ; copy first digit in BH
+    
+    MOV DL, 100D            ; to divide the number with 100 & extracting the 1st digit
+    
+    MOV AH, 0
+    DIV DL                  ; divide the number with 100
+    MOV D1, AL                  ; store the 1st digit from AL to D1
+    
+    MOV DL, 10D             ; to divide the number with 10 & extract the 2nd digit
+   
+    MOV AL, AH              ; load the rest of the number from AH to AL
+    MOV AH, 0
+    DIV DL                  ; divide the number with 10    
+    MOV D2, AL                  ; store he 2nd digit from AL to D2
+    
+    MOV D3, AH              ; store the 3rd digit from AH to D3
+    
+    MOV AH, 2               ; call output function
+    
+    MOV DL, D1              ; load the 1st digit in DL
+    ADD DL, 30H                 ; make DL a number
+    INT 21H                 ; print the 1st digit
+    
+    MOV DL, D2              
+    ADD DL, 30H             ; do the same thing for 2nd digit
+    INT 21H
+    
+    MOV DL, D3              
+    ADD DL, 30H             ; do the same thing for 3rd digit
+    INT 21H 
+    
     
     MOV AH, 9
-    LEA DX, MSG3
+    LEA DX, MSG4   
+    INT 21H  
+    
+    MOV AX, 0                   ; clear AX register
+    MOV AL, A               ; copy AL in A 
+    
+    MOV BL, B
+    
+    CMP AL, BL              ; if first number is smaller
+    JL SWAP                     ; then swap them & print (-)
+    JMP SUBTRACTION
+
+SWAP:
+    
+    XCHG AL, BL             ; swap in registers
+    
+    MOV A, AL               ; swap in the variables
+    MOV B, BL
+    
+    MOV AH, 2
+    MOV DL, 45D             ; print a negative sign
     INT 21H
     
-    MOV AH, 2               ; print 1st digit
-    MOV DL, BH
-    ADD DL, 30H
+SUBTRACTION: 
+
+    MOV AL, A
+    
+    SUB AL, B               ; add the numbers and store it in AL  
+    
+    MOV DL, 100D            ; to divide the number with 100 & extracting the 1st digit
+    
+    MOV AH, 0
+    DIV DL                  ; divide the number with 100
+    MOV D1, AL                  ; store the 1st digit from AL to D1
+    
+    MOV DL, 10D             ; to divide the number with 10 & extract the 2nd digit
+   
+    MOV AL, AH              ; load the rest of the number from AH to AL
+    MOV AH, 0
+    DIV DL                  ; divide the number with 10    
+    MOV D2, AL                  ; store he 2nd digit from AL to D2
+    
+    MOV D3, AH              ; store the 3rd digit from AH to D3
+    
+    MOV AH, 2               ; call output function
+    
+    MOV DL, D1              ; load the 1st digit in DL
+    ADD DL, 30H                 ; make DL a number
+    INT 21H                 ; print the 1st digit
+    
+    MOV DL, D2              
+    ADD DL, 30H             ; do the same thing for 2nd digit
     INT 21H
     
-    MOV AH, 2               ; print 2nd digit
-    MOV DL, BL
-    ADD DL, 30H
-    INT 21H    
-    
-    MOV AX, 0               ; clear AX register
-    MOV AL, A                   ; copy AL in A
-    
-    SUB AL, B               ; subtract the numbers and store it in AL
-    AAM                         ; adjust the number in AH and AL
-    
-    MOV BL, AL              ; copy second digit in BL
-    MOV BH, AH                  ; copy first digit in BH
-    
-    MOV AH, 9
-    LEA DX, MSG4
-    INT 21H
-    
-    MOV AH, 2               ; print 1st digit
-    MOV DL, BH
-    ADD DL, 30H
-    INT 21H
-    
-    MOV AH, 2                ; print 2nd digit
-    MOV DL, BL
-    ADD DL, 30H
-    INT 21H
-                            
+    MOV DL, D3              
+    ADD DL, 30H             ; do the same thing for 3rd digit
+    INT 21H 
         
 EXIT:
     

@@ -95,9 +95,9 @@ CALCULATE:
     ADD AL, B
     
     MOV CL, 2               ; copy 2 in CL to divide the number
-    DIV CL
+    DIV CL                      ; divide the number by 2
     
-    MOV CH, AH                      ; divide the number by 2
+    MOV CH, AH              ; store the remainder in CH from AH        
     
     MOV DL, 100D            ; to divide the number with 100 & extracting the 1st digit
     
